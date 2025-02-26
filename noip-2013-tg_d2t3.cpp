@@ -13,20 +13,21 @@ int start_x, start_y, end_x, end_y;
 int lat[MAX][MAX];
 int visited[MAX][MAX][MAX][MAX];
 
-int dx[4] = { 1, -1, 0, 0 };
-int dy[4] = { 0, 0, 1, -1 };
+int dx[4] = { 1, 0, 0, -1 };
+int dy[4] = { 0, -1, 1, 0 };
 
 struct Status {
     int x, y;
     int sx, sy;
-    Status() : x(0), y(0), sx(0), sy(0) {}
-    Status(int x, int y, int sx, int sy) : x(x), y(y), sx(sx), sy(sy) {}
+    int last;
+    Status() : x(0), y(0), sx(0), sy(0), last(0) {}
+    Status(int x, int y, int sx, int sy, int last) : x(x), y(y), sx(sx), sy(sy), last(last) {}
 };
 
 int bfs(int bx, int by, int sx, int sy) {
     int cnt = 0;
     queue<Status> que;
-    que.push(Status(bx, by, sx, sy));
+    que.push(Status(bx, by, sx, sy,4));
     visited[bx][by][sx][sy] = 1;
     
     while (!que.empty()) {
@@ -37,16 +38,18 @@ int bfs(int bx, int by, int sx, int sy) {
             Status cur = que.front();
             que.pop();
             for (int j = 0; j < 4; ++j) {
+                if (cur.last + j == 3)   continue;
                 int x = cur.x + dx[j];
                 int y = cur.y + dy[j];
                 // switching (cur.x,cur.y) with (x,y)
                 if (x < 1 || x > n || y <1 || y > m || lat[x][y] == 0)    continue;
                 Status now;
                 if (x == cur.sx && y == cur.sy)
-                    now = Status(x, y, cur.x, cur.y);
+                    now = Status(x, y, cur.x, cur.y,0);
                 else
-                    now = Status(x, y, cur.sx, cur.sy);
+                    now = Status(x, y, cur.sx, cur.sy,0);
                 if (visited[now.x][now.y][now.sx][now.sy]==1)    continue;
+                now.last = j;
                 visited[now.x][now.y][now.sx][now.sy]=1;
                 que.push(now);
                 if (now.sx == end_x && now.sy == end_y) return cnt;
@@ -57,6 +60,7 @@ int bfs(int bx, int by, int sx, int sy) {
 }
 
 int main() {
+    // ios::sync_with_stdio(false),cin.tie(nullptr),cout.tie(nullptr);
     cin >> n >> m >> q;
     memset(lat, 0, sizeof(lat));
     memset(visited, 0, sizeof(visited));
@@ -69,10 +73,10 @@ int main() {
     }
     
     for (int i = 0; i < q; ++i) {
-        // cin >> blank_x >> blank_y >> start_x >> start_y >> end_x >> end_y;
-        // cout << bfs(blank_x, blank_y, start_x, start_y) << endl;
-        scanf("%d %d %d %d %d %d", &blank_x, &blank_y, &start_x, &start_y, &end_x, &end_y);
-        printf("%d\n", bfs(blank_x, blank_y, start_x, start_y));
+        cin >> blank_x >> blank_y >> start_x >> start_y >> end_x >> end_y;
+        cout << bfs(blank_x, blank_y, start_x, start_y) << endl;
+        // scanf("%d %d %d %d %d %d", &blank_x, &blank_y, &start_x, &start_y, &end_x, &end_y);
+        // printf("%d\n", bfs(blank_x, blank_y, start_x, start_y));
         memset(visited, 0, sizeof(visited));
     }
     
