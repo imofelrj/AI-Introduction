@@ -10,6 +10,9 @@
         "string_view": "cpp",
         "vector": "cpp",
         "ios": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "ostream": "cpp",
+        "utility": "cpp",
+        "regex": "cpp"
     }
 }
